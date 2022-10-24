@@ -51,10 +51,11 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 int cont=0;
-char cadena_temp[10] = "Temp= ";
-char cadena_presion[10] = "Press= ";
-char cadena_UV[10] = "UV = ";
-char cadena_altitud[10] = "Alt= ";
+int error=0;
+char cadena_temp[14] = "Temperatura= ";
+char cadena_presion[10] = "Presion= ";
+char cadena_UV[5] = "UV = ";
+char cadena_altitud[9] = "Altitud= ";
 
 /* USER CODE END PV */
 
@@ -126,6 +127,11 @@ int main(void)
 
 	  cont++;
 
+	  //if(error == 1){
+	  //BME280_Config(OSRS_2, OSRS_16, OSRS_1, MODE_NORMAL, T_SB_0p5, IIR_16);
+		 // error = 0;
+	  //}
+
 	  HAL_ADC_Start(&hadc1);
 
 	  lectura_sensorUV=HAL_ADC_GetValue(&hadc1);
@@ -141,15 +147,16 @@ int main(void)
 
 	  // Visualizacion de Variables:
 
-	  printf("\n\nNueva Lectura\n");
+	  if (Temperature < -100 || altitud <= 0 || Pressure==0 ){
+		  printf("\nError de Sensor\n");
+		  HAL_NVIC_SystemReset();
+	  }
+	  else{
+		  printf("\n\nLectura: %d\n\tTemperatura= %.2f C\n\tPresion= %.2f hPa\n\tUV= %.2f uW/cm2\n\tAltitud= %.2f m\n",cont,Temperature,Pressure/100,UV,altitud);
+	  }
 
-	  printf("i=%d %s %.2f\n",cont,cadena_temp,Temperature);
-	  printf("i=%d %s %.2f\n",cont,cadena_presion,Pressure/100);
-	  printf("i=%d %s %.2f\n",cont,cadena_UV,UV);
-	  printf("i=%d %s %.2f\n",cont,cadena_altitud,altitud);
-
-
-	  HAL_Delay(700);
+	  if (altitud < 1000){HAL_Delay(1000);}		//Pasar a 15000 antes del lanzamiento
+	  else {HAL_Delay(180000);}
 
   }
   /* USER CODE END 3 */
@@ -334,7 +341,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;

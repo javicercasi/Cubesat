@@ -50,7 +50,7 @@ void TrimRead(void)
 {
 	uint8_t trimdata[32];
 	// Read NVM from 0x88 to 0xA1
-	HAL_I2C_Mem_Read(BME280_I2C, BME280_ADDRESS, 0x88, 1, trimdata, 25, HAL_MAX_DELAY);
+	HAL_I2C_Mem_Read(BME280_I2C, BME280_ADDRESS, 0x88, 1, trimdata, 25, 1000);
 
 	// Read NVM from 0xE1 to 0xE7
 	//HAL_I2C_Mem_Read(BME280_I2C, BME280_ADDRESS, 0xE1, 1, (uint8_t *)trimdata+25, 7, HAL_MAX_DELAY);
